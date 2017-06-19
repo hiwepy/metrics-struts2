@@ -15,16 +15,12 @@
  */
 package com.codahale.metrics.struts2;
 
-import static com.codahale.metrics.MetricRegistry.name;
-
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SharedMetricRegistries;
-import com.codahale.metrics.Timer;
 import com.opensymphony.xwork2.config.ConfigurationException;
 import com.opensymphony.xwork2.config.entities.InterceptorConfig;
 import com.opensymphony.xwork2.factory.DefaultInterceptorFactory;
@@ -35,6 +31,7 @@ public class InstrumentInterceptorFactory extends DefaultInterceptorFactory {
 
 	protected String metricRegistry;
 	protected MetricRegistry registry = null;
+	protected InvocationHandler invocationHandler = null;
 	
 	public InstrumentInterceptorFactory() {
 		super();
@@ -50,34 +47,30 @@ public class InstrumentInterceptorFactory extends DefaultInterceptorFactory {
 		this.metricRegistry = metricRegistry;
 	}
 	
+	public InvocationHandler getInvocationHandler() {
+		return invocationHandler;
+	}
+
+	@Inject
+	public void setInvocationHandler(InvocationHandler invocationHandler) {
+		this.invocationHandler = invocationHandler;
+	}
+
+	
 	@Override
 	public Interceptor buildInterceptor(final InterceptorConfig interceptorConfig, Map<String, String> interceptorRefParams) throws ConfigurationException {
 		
 		final Interceptor target = super.buildInterceptor(interceptorConfig, interceptorRefParams);
-		
-		return (Interceptor) Proxy.newProxyInstance(
-                target.getClass().getClassLoader(),
-                target.getClass().getInterfaces(),
-                new InvocationHandler() {
-                	
-                    @Override
-                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                    	Timer timer = registry.timer(name(interceptorConfig.getClassName(), method.getName()));
-                    	 final Timer.Context ctx = timer.time();
-                         try {
-                             //执行目标对象方法
-                             Object returnValue = method.invoke(target, args);
-                             return returnValue;
-                         } finally {
-                             ctx.stop();
-                         }
-                    }
-                }
-        );
+		if( getInvocationHandler() != null ){
+    		//返回Action的代理对象
+    		return (Interceptor) Proxy.newProxyInstance(
+                    target.getClass().getClassLoader(),
+                    target.getClass().getInterfaces(),
+                    getInvocationHandler()
+            );
+    	}
+		return target;
 		
 	}
-	    
-		
 	
-
 }
