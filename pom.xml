@@ -7,7 +7,7 @@
 	
 	<name>Metrics Struts 2.x Integration</name>
 	<description>Metrics + Struts 2.x for Struts2 monitoring</description>
-	<url>https://github.com/vindell/metrics-struts2</url>
+	<url>https://github.com/hiwepy/metrics-struts2</url>
 	<packaging>jar</packaging>
 	
 	<licenses>
@@ -18,9 +18,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:https:github.com/vindell/${project.artifactId}.git</connection>
-		<developerConnection>scm:git:https:github.com/vindell/${project.artifactId}.git</developerConnection>
-		<url>https:github.com/vindell/${project.artifactId}</url>
+		<connection>scm:git:https:github.com/hiwepy/${project.artifactId}.git</connection>
+		<developerConnection>scm:git:https:github.com/hiwepy/${project.artifactId}.git</developerConnection>
+		<url>https:github.com/hiwepy/${project.artifactId}</url>
 		<tag>${project.artifactId}</tag>
 	</scm>
 
